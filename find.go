@@ -141,7 +141,7 @@ func iterateReservedStatusPerHour(page *agouti.Page, id string, f reserverStatus
 	return nil
 }
 
-func visitReservedStatusPerHour(page *agouti.Page) {
+func visitReservedStatusPerHour(page *agouti.Page) []string {
 	const (
 		FROM_9 = iota
 		FROM_10
@@ -157,19 +157,23 @@ func visitReservedStatusPerHour(page *agouti.Page) {
 		FROM_20
 	)
 	var timeOfHope = []int{FROM_13, FROM_14, FROM_15, FROM_16}
+	emptyList := make([]string, 0)
 	f := func(date, name, maxHumans string, status []string) {
 		for _, t := range timeOfHope {
 			if status[t] != "○" {
 				return
 			}
 		}
-		log.Printf("Found empty facility:  %s,%s,%s", date, name, maxHumans)
+
+		emptyLog := fmt.Sprintf("%s,%s,%s", date, name, maxHumans)
+		emptyList = append(emptyList, emptyLog)
+		log.Printf("Found empty facility:  %s,%s,%s", emptyLog)
 	}
 	for i := 0; ; i++ {
 		id := fmt.Sprintf("dlRepeat_ctl%02d_tpItem_dgTable", i)
 		err := iterateReservedStatusPerHour(page, id, f)
 		if err != nil {
-			return
+			return emptyList
 		}
 	}
 }
@@ -178,7 +182,7 @@ func gotoSystemMenu(page *agouti.Page) {
 	clickByID(page, "ucPCFooter_btnToMenu")
 }
 
-func findFacility(from, to time.Time) {
+func findFacility(from, to time.Time) []string {
 	log.Printf("from:%s to:%s", from, to)
 	driver := agouti.PhantomJS()
 	if err := driver.Start(); err != nil {
@@ -202,12 +206,15 @@ func findFacility(from, to time.Time) {
 
 	visitWelcome(page)
 
+	emptyList := make([]string, 0)
 	for t := from; t.Before(to); t = t.AddDate(0, 0, 7) {
 		visitSystemMenu(page)
 		visitFacilitySearch(page)
 		visitDateAndTimeSelection(page, t.Year(), int(t.Month()), t.Day())
 		visitReservedStatusPerFacility(page)
-		visitReservedStatusPerHour(page)
+		list := visitReservedStatusPerHour(page)
+		emptyList = append(emptyList, list...)
 		gotoSystemMenu(page)
 	}
+	return emptyList
 }
