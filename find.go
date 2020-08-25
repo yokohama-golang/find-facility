@@ -14,7 +14,7 @@ import (
 func screenshot(page *agouti.Page) {
 	log.Printf("trace: page.Screenshot(golang.png)")
 	if err := page.Screenshot("golang.png"); err != nil {
-		log.Fatalf("error: Failed to screenshot: %v", err)
+		log.Printf("error: Failed to screenshot: %v", err)
 	}
 }
 
@@ -29,6 +29,14 @@ func submitByID(page *agouti.Page, id string) {
 func clickByID(page *agouti.Page, id string) {
 	log.Printf("trace: page.FindByID(%s).Click()", id)
 	if err := page.FindByID(id).Click(); err != nil {
+		screenshot(page)
+		log.Fatalf("error: Failed to click: %v", err)
+	}
+}
+
+func clickByButton(page *agouti.Page, id string) {
+	log.Printf("trace: page.FindByButton(%s).Click()", id)
+	if err := page.FindByButton(id).Click(); err != nil {
 		screenshot(page)
 		log.Fatalf("error: Failed to click: %v", err)
 	}
@@ -59,7 +67,7 @@ func visitSystemMenu(page *agouti.Page) {
 }
 
 func visitFacilitySearch(page *agouti.Page) {
-	clickByID(page, "dgTable_ctl09_chkShisetsu")
+	clickByButton(page, "かながわ県民センター")
 	clickByID(page, "ucPCFooter_btnForward")
 }
 
