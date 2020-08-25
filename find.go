@@ -175,7 +175,7 @@ func visitReservedStatusPerHour(page *agouti.Page) []string {
 
 		emptyLog := fmt.Sprintf("%s,%s,%s", date, name, maxHumans)
 		emptyList = append(emptyList, emptyLog)
-		log.Printf("Found empty facility:  %s,%s,%s", emptyLog)
+		log.Printf("Found empty facility:  %s", emptyLog)
 	}
 	for i := 0; ; i++ {
 		id := fmt.Sprintf("dlRepeat_ctl%02d_tpItem_dgTable", i)
