@@ -1,4 +1,5 @@
 // +build !aws
+// +build !ifttt_ut
 
 package main
 

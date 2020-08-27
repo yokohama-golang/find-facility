@@ -9,14 +9,15 @@ $ go get -u github.com/comail/colog
 
 $ go build
 
+## ifttt_ut
+
+$ go build -tags ifttt_ut
+
 ## aws
 
 ### IFTTT
 
 https://ifttt.com/maker_webhooks
-find_facility
-https://maker.ifttt.com/use/b-bocpdYO2gSjRl1iqdhRJ
-070-4221-3401
 
 ### aws
 

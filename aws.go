@@ -1,4 +1,5 @@
 // +build aws
+// +build !ifttt_ut
 
 package main
 
@@ -18,9 +19,6 @@ type MyEvent struct {
 	To   int    `json:"to"`
 }
 
-const KEY = "<<your key on IFTTT Maker Event>>"
-const EVENT = "<< your event on IFTTT Maker Event>>"
-
 func find(ctx context.Context, event MyEvent) (string, error) {
 	log.Printf("name:%s, from:%d, to:%d", event.Name, event.From, event.To)
 	now := time.Now()
@@ -31,8 +29,9 @@ func find(ctx context.Context, event MyEvent) (string, error) {
 	maker := new(GoIFTTTMaker.MakerChannel)
 	maker.Value1 = fmt.Sprintf("name:%s, from:%d, to:%d", event.Name, event.From, event.To)
 	maker.Value2 = fmt.Sprintf("%s", emptyList)
-	maker.Send(KEY, EVENT)
+	b := maker.Send(KEY, EVENT)
 
+	log.Printf("make.Send() returns %v", b)
 	log.Printf("Finished.")
 	return fmt.Sprintf("Finished %s!", event.Name), nil
 }
